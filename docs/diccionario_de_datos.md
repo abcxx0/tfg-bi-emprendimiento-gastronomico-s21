@@ -92,6 +92,7 @@ Funcion: Parametro desconectado que alimenta las medidas de simulacion de increm
 | lotes → ventas | 1:N | lotes.ID_lote → ventas.ID_lote | Vincula cada registro de venta con el lote de produccion correspondiente. Permite analizar unidades vendidas, stock y liquidacion del lote. |
 | Dim_Productos → lotes | 1:N | Dim_Productos.producto → lotes.producto | Permite filtrar y analizar los lotes segun el producto elaborado. |
 | Dim_Productos → recetas | 1:N | Dim_Productos.producto → recetas.producto | Permite asociar cada producto con los ingredientes y cantidades definidas en su receta. |
+| Dim_Ingredientes → recetas | 1:N | Dim_Ingredientes.ingrediente → recetas.ingrediente | Vincula la tabla calculada de ingredientes con las recetas, permitiendo ordenar y filtrar por ingrediente en visualizaciones y calculos de costo. |
 | insumos ↔ recetas | N:N | insumos.ingrediente ↔ recetas.ingrediente; filtro bidireccional | Vincula las compras de ingredientes con su utilizacion en las recetas y permite calcular costos mediante las medidas DAX. |
 | VarChoclo | Sin relacion fisica | Tabla de parametro What-If desconectada | Proporciona el valor utilizado para simular variaciones en el precio del choclo. |
 | VarCarne | Sin relacion fisica | Tabla de parametro What-If desconectada | Proporciona el valor utilizado para simular variaciones en el precio de la carne. |
