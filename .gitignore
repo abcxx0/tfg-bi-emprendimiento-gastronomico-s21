@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# Entornos
+.venv/
+env/
+venv/
+
+# Power BI
+~$*.pbix
+*.pbix.bak
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.log
