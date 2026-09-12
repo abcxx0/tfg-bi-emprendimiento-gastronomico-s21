@@ -1,0 +1,27 @@
+ID_receta,producto,ingrediente,cantidad_por_unidad,unidad
+R01,Tamal,Maiz pelado amarillo,0.023333,kg
+R02,Tamal,Carne de vaca,0.013333,kg
+R03,Tamal,Carne de cerdo,0.013333,kg
+R04,Tamal,Cebolla,0.016667,kg
+R05,Tamal,Papa,0.016667,kg
+R06,Tamal,Grasa de cerdo,0.00265,kg
+R07,Tamal,Azucar,0.000667,kg
+R08,Tamal,Sal fina,0.000633,kg
+R09,Tamal,Sal gruesa,0.0006,kg
+R10,Tamal,Caldo de gallina,0.023333,unidad
+R11,Tamal,Pimienta blanca,0.000133,kg
+R12,Tamal,Comino,8e-05,kg
+R13,Tamal,Aji locoto,0.000167,kg
+R14,Tamal,Pimenton rojo,0.000333,kg
+R15,Tamal,Hojas de chala,0.006667,kg
+R16,Tamal,Leña,0.0025,m2
+R17,Humita,Choclo blanco,0.416667,unidad
+R18,Humita,Queso de mesa,0.008333,kg
+R19,Humita,Leche,0.004167,L
+R20,Humita,Grasa de cerdo,0.003333,kg
+R21,Humita,Azucar,0.005,kg
+R22,Humita,Sal fina,0.000833,kg
+R23,Humita,Sal gruesa,0.0005,kg
+R24,Humita,Canela,5e-05,kg
+R25,Humita,Albahaca,8.3e-05,kg
+R26,Humita,Leña,0.003333,m2
