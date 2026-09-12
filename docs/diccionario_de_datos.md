@@ -1,8 +1,10 @@
 # Diccionario de datos
 
-Describe la estructura de los 4 archivos CSV que componen el modelo relacional de la solucion (carpeta `data/`), generados por el script `notebooks/tfg_generacion_datos.py`.
+Describe la estructura de los 4 archivos CSV fuente (carpeta `data/`) y las tablas calculadas/parametros implementados en Power BI, que componen el modelo relacional completo de la solucion.
 
-## LOTES (`lotes.csv`)
+## Archivos CSV fuente
+
+### LOTES (`lotes.csv`)
 
 | Columna | Tipo de dato | Descripcion |
 |---|---|---|
@@ -13,7 +15,7 @@ Describe la estructura de los 4 archivos CSV que componen el modelo relacional d
 | stock_inicial | Entero | Unidades disponibles al inicio del ciclo (0 en el dataset simulado, ya que cada lote parte de produccion nueva). |
 | stock_final | Entero | Unidades remanentes luego de las ventas del lote (`unidades_producidas - unidades_vendidas`). |
 
-## VENTAS (`ventas.csv`)
+### VENTAS (`ventas.csv`)
 
 | Columna | Tipo de dato | Descripcion |
 |---|---|---|
@@ -25,7 +27,7 @@ Describe la estructura de los 4 archivos CSV que componen el modelo relacional d
 | precio_unitario | Decimal | Precio de venta por unidad individual. |
 | canal | Texto | Canal de venta: Feria o Pedido. |
 
-## INSUMOS (`insumos.csv`)
+### INSUMOS (`insumos.csv`)
 
 | Columna | Tipo de dato | Descripcion |
 |---|---|---|
@@ -38,7 +40,7 @@ Describe la estructura de los 4 archivos CSV que componen el modelo relacional d
 
 > Nota de coherencia: INSUMOS no contiene una clave foranea fisica `ID_lote`. La vinculacion entre un insumo y el lote que lo consumio se resuelve de forma analitica en el modelo de Power BI, cruzando `fecha_compra` con `fecha_produccion` del lote y la composicion de RECETAS, no mediante una relacion directa entre tablas. Esto es intencional y esta alineado con el diseno del modelo relacional descrito en la arquitectura de la solucion.
 
-## RECETAS (`recetas.csv`)
+### RECETAS (`recetas.csv`)
 
 | Columna | Tipo de dato | Descripcion |
 |---|---|---|
@@ -48,10 +50,48 @@ Describe la estructura de los 4 archivos CSV que componen el modelo relacional d
 | cantidad_por_unidad | Decimal | Cantidad exacta del ingrediente requerida para producir una unidad del producto. |
 | unidad | Texto | Unidad de medida de la cantidad (kg, L, unidad, m2). |
 
-## Relaciones entre entidades
+## Tablas calculadas y parametros en Power BI
 
-| Relacion | Cardinalidad | Descripcion |
+### Dim_Productos
+
+| Columna | Tipo de dato | Descripcion |
 |---|---|---|
-| LOTES - VENTAS | 1:N | Un lote puede tener multiples ventas asociadas, vinculadas por `ID_lote`. |
-| LOTES - INSUMOS | Sin relacion fisica directa | El costo se calcula analiticamente en Power BI cruzando fecha de produccion, receta y precio de compra vigente. |
-| RECETAS - INSUMOS | Vinculacion logica por atributo `ingrediente` | Se resuelve mediante medidas DAX que buscan el precio del insumo correspondiente a cada ingrediente de la receta. |
+| producto | Texto | Lista distinta de productos (`Tamal`, `Humita`). Generada con `DISTINCT(lotes[producto])` o `DISTINCT(recetas[producto])`. |
+
+Funcion: Tabla de dimension para filtrado cruzado de lotes, ventas y recetas por producto.
+
+### Dim_Ingredientes
+
+| Columna | Tipo de dato | Descripcion |
+|---|---|---|
+| ingrediente | Texto | Lista distinta de ingredientes (generada con `DISTINCT(RECETAS[ingrediente])`). |
+| Orden Costo Receta | Decimal | Columna calculada que asigna a cada ingrediente su impacto en el costo de la receta (costo real multiplicado por -1 para orden descendente en visualizaciones). |
+
+Funcion: Tabla calculada enriquecida que permite ordenar los ingredientes por su peso en el costo de la receta en graficos y tablas.
+
+### VarChoclo (parametro What-If)
+
+| Columna | Tipo de dato | Descripcion |
+|---|---|---|
+| VarChoclo | Decimal | Valor numerico continuo (porcentaje) seleccionado por el usuario mediante control deslizante. Rango tipico: 0% a 50% (configurable). |
+
+Funcion: Parametro desconectado que alimenta las medidas de simulacion de incremento en el precio del choclo.
+
+### VarCarne (parametro What-If)
+
+| Columna | Tipo de dato | Descripcion |
+|---|---|---|
+| VarCarne | Decimal | Valor numerico continuo (porcentaje) seleccionado por el usuario mediante control deslizante. Rango tipico: 0% a 50% (configurable). |
+
+Funcion: Parametro desconectado que alimenta las medidas de simulacion de incremento en el precio de la carne.
+
+## Relaciones y tablas auxiliares del modelo de Power BI
+
+| Relacion o tabla auxiliar | Cardinalidad | Campo de vinculacion / configuracion | Funcion en el modelo |
+|---|---|---|---|
+| lotes → ventas | 1:N | lotes.ID_lote → ventas.ID_lote | Vincula cada registro de venta con el lote de produccion correspondiente. Permite analizar unidades vendidas, stock y liquidacion del lote. |
+| Dim_Productos → lotes | 1:N | Dim_Productos.producto → lotes.producto | Permite filtrar y analizar los lotes segun el producto elaborado. |
+| Dim_Productos → recetas | 1:N | Dim_Productos.producto → recetas.producto | Permite asociar cada producto con los ingredientes y cantidades definidas en su receta. |
+| insumos ↔ recetas | N:N | insumos.ingrediente ↔ recetas.ingrediente; filtro bidireccional | Vincula las compras de ingredientes con su utilizacion en las recetas y permite calcular costos mediante las medidas DAX. |
+| VarChoclo | Sin relacion fisica | Tabla de parametro What-If desconectada | Proporciona el valor utilizado para simular variaciones en el precio del choclo. |
+| VarCarne | Sin relacion fisica | Tabla de parametro What-If desconectada | Proporciona el valor utilizado para simular variaciones en el precio de la carne. |
